@@ -12,6 +12,8 @@ public class ClientAccount implements Serializable {
     private String currency_code;
     private BigDecimal display_balance;
 
+    public ClientAccount(){}
+
     public ClientAccount(String account_number, Integer client_id, String account_type_code, String currency_code,
             BigDecimal display_balance) {
         this.account_number = account_number;

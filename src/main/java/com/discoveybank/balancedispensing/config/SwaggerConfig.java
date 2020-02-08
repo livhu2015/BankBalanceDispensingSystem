@@ -19,8 +19,6 @@ public class SwaggerConfig {
     private String title = "Bank System";
     private String description = "API";
     private String termsOfServiceUrl = "http:discovery.com";
-    // private String version = "1.0";
-    // private String basePackage = "com.discoveybank.balancedispensing";
 
     @Bean
     public Docket api() {
@@ -30,15 +28,6 @@ public class SwaggerConfig {
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any()).build().apiInfo(apiInfo());
     }
-
-    // private ApiInfo metaData() {
-    //     return new ApiInfoBuilder()
-    //             .title(title)
-    //             .description(description)
-    //             .termsOfServiceUrl(termsOfServiceUrl)
-    //             .version(version).build();
-    // }
-  
    
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder().title(title).description(description)
