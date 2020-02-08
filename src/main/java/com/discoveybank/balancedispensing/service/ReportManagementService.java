@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface ReportManagementService {
     List<ClientAccountSummary> generateClientAccountReport();
-    ClientAggregate calculateAggregatePosition(int clientId);
+    List<ClientAggregate> calculateClientsAggregatePosition();
 }

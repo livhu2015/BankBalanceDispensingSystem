@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service("ReportManagementService")
@@ -29,7 +30,20 @@ public class ReportManagementServiceImpl implements ReportManagementService {
 
     @Override
     public List<ClientAccountSummary> generateClientAccountReport() {
-        return reportManagementMapper.findAll();
+        return reportManagementMapper.findAllTransactionalAccounts();
+    }
+
+    @Override
+    public List<ClientAggregate> calculateClientsAggregatePosition() {
+
+        List<ClientAggregate> clientAggregates = new ArrayList<>();
+        List<Client> clients = clientMapper.findAll();
+
+        for(Client client: clients) {
+            ClientAggregate clientAggregate = calculateAggregatePosition(client.getClientId());
+            clientAggregates.add(clientAggregate);
+        }
+        return clientAggregates;
     }
 
     /**
@@ -38,8 +52,7 @@ public class ReportManagementServiceImpl implements ReportManagementService {
      * Transactional Balance (Aggregate of all transactional accounts)
      * Net Position (Net position across all accounts)
      */
-    @Override
-    public ClientAggregate calculateAggregatePosition(int clientId) {
+    private ClientAggregate calculateAggregatePosition(int clientId) {
 
         ClientAggregate clientAggregateResponse = new ClientAggregate();
         Client client = clientMapper.findClientById(clientId);

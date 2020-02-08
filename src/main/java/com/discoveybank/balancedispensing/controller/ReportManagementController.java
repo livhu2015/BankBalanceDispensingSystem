@@ -1,7 +1,6 @@
 package com.discoveybank.balancedispensing.controller;
 
 
-import com.discoveybank.balancedispensing.model.ClientAccount;
 import com.discoveybank.balancedispensing.model.ClientAccountSummary;
 import com.discoveybank.balancedispensing.model.ClientAggregate;
 import com.discoveybank.balancedispensing.service.ReportManagementService;
@@ -10,27 +9,21 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
 @RequestMapping("/report")
 public class ReportManagementController {
-    /**
-     * A report needs to be generated that displays a list of all clients along with the account details of the
-     * client’s account with the highest balance
-     *
-     *
-     */
+
     private Logger logger = LoggerFactory.getLogger(ReportManagementController.class);
 
     @Autowired
     private ReportManagementService reportManagementService;
 
-    @GetMapping("/client-dashboard")
+    @GetMapping("/transactional-accounts")
     public @ResponseBody
     List<ClientAccountSummary> generateClientAccountReport() {
-        logger.info("reporting...");
+        logger.info("Reporting on the transactional account per client with the highest balance...");
         return reportManagementService.generateClientAccountReport();
     }
 
@@ -39,17 +32,9 @@ public class ReportManagementController {
      * @return
      */
      @GetMapping("/financial-positions")
-    public @ResponseBody
-     ClientAggregate calculateAggregatePosition(int clientId) {
-        logger.info("reporting...");
-
-         /**
-          * Client (Client Title + Client Name + Client Surname)
-          * Loan Balance (Aggregate of all loan amounts)
-          * Transactional Balance (Aggregate of all transactional accounts)
-          * Net Position (Net position across all accounts)
-          */
-         return reportManagementService.calculateAggregatePosition(clientId);
+     public @ResponseBody List<ClientAggregate> calculateAggregatePosition() {
+        logger.info("reporting on the aggregate financial position per client...");
+         return reportManagementService.calculateClientsAggregatePosition();
     }
 
 
