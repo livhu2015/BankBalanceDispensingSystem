@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 public class MessageProducer {
     private static final Logger logger = LoggerFactory.getLogger(MessageProducer.class);
     private static final String TOPIC = "transactions";
+
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
-
 
     public void sendMessage(String message) {
         logger.info(String.format("#### -> Producing message -> %s", message));

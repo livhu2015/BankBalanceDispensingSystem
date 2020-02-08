@@ -30,9 +30,10 @@ public class TransactionalServiceImpl implements TransactionalService {
 
     @Autowired
     private MessageProducer messageProducer;
+
     //Todo unit testing
     @Override
-    public List<ClientAccount> displayBalance( int clientId) {
+    public List<ClientAccount> displayBalance(int clientId) {
         List<ClientAccount> clientAccounts = transactionalAccountMapper.findById(clientId);
 
         if(clientAccounts.isEmpty()) {
