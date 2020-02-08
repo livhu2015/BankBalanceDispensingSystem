@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
 @RequestMapping("/secured")
 public class SecuredTransactionController {
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(SecuredTransactionController.class);
 
     @Autowired
     private TransactionalService transactionalService;
@@ -30,7 +31,7 @@ public class SecuredTransactionController {
      */
     @GetMapping("/balance/{clientId}")
     public @ResponseBody
-    List<ClientAccount> displayBalance(@PathVariable("clientId") int clientId) {
+    List<ClientAccount> displayBalance(@PathVariable("clientId") int clientId) throws IOException {
         logger.info("display balance...");
         return transactionalService.displayBalance(clientId);
     }
@@ -51,7 +52,7 @@ public class SecuredTransactionController {
      */
     @PostMapping("/withdraw/{amount}")
     public @ResponseBody
-    ClientAccount processCashWithdraw(@RequestBody ClientAccount clientAccount, @PathVariable("amount") BigDecimal amount) {
+    ClientAccount processCashWithdraw(@RequestBody ClientAccount clientAccount, @PathVariable("amount") BigDecimal amount) throws IOException {
         logger.info("withdraw of amount"+amount + " to ZAR...");
         return transactionalService.processCashWithdraw(clientAccount.getClient_id(), clientAccount.getAccount_number(), amount.doubleValue());
     }

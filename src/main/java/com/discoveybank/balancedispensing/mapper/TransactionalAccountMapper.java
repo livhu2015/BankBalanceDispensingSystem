@@ -16,7 +16,7 @@ public interface TransactionalAccountMapper {
      */
     @Select("SELECT account_number as account_number, client_id as client_id, account_type_code as account_type_code," +
             " currency_code as currency_code, display_balance as display_balance FROM client_account WHERE client_id = #{client_id}")
-    public List<ClientAccount> findById(int client_id);
+    public List<ClientAccount> findClientAccounts(int client_id);
 
     @Update("Update client_account set display_balance=#{display_balance} where client_id=#{client_id}")
     ClientAccount updateAccountBalance(ClientAccount updatedClientAccount);

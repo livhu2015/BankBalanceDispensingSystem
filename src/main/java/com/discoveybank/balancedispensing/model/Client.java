@@ -11,6 +11,12 @@ public class Client {
     private LocalDate dob;
     private String client_sub_type_code;
 
+    public Client(String title, String name, String surname) {
+        this.title = title;
+        this.name = name;
+        this.surname = surname;
+    }
+
     public Client(Integer client_id, String title, String name, String surname, LocalDate dob, String client_sub_type_code) {
 
         this.client_id = client_id;

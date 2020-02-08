@@ -11,13 +11,19 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 @Mapper
-public interface ClientRepository {
+public interface ClientMapper {
 
     @Select("SELECT * FROM client")
     public List<Client> findAll();
-
-    @Select("SELECT * FROM client WHERE client_id = #{client_id}")
-    public Client findById(int id);
+//    Error attempting to get column 'title' from result set.
+//    Cause: java.sql.SQLDataException: Cannot determine value type from string 'Mr'
+    ;
+    /**
+     * @param clientId
+     * @return
+     */
+    @Select("SELECT title as title, name as name, surname as surname FROM client WHERE client_id=#{client_id}")
+    public Client findClientById(int clientId);
 
     @Delete("DELETE FROM client WHERE client_id = #{client_id}")
     public int deleteById(int id);

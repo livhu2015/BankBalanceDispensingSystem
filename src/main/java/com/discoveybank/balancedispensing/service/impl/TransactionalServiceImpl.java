@@ -1,5 +1,6 @@
 package com.discoveybank.balancedispensing.service.impl;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.List;
 import com.discoveybank.balancedispensing.model.ClientAccount;
 import com.discoveybank.balancedispensing.mapper.TransactionalAccountMapper;
 
+import com.discoveybank.balancedispensing.service.MessageConsumer;
 import com.discoveybank.balancedispensing.service.MessageProducer;
 import com.discoveybank.balancedispensing.service.TransactionalService;
 import org.slf4j.Logger;
@@ -31,19 +33,22 @@ public class TransactionalServiceImpl implements TransactionalService {
     @Autowired
     private MessageProducer messageProducer;
 
+    @Autowired
+    private MessageConsumer messageConsumer;
+
     //Todo unit testing
     @Override
-    public List<ClientAccount> displayBalance(int clientId) {
-        List<ClientAccount> clientAccounts = transactionalAccountMapper.findById(clientId);
+    public List<ClientAccount> displayBalance(int clientId) throws IOException {
+
+//        messageProducer.sendMessage("Client Id:: "+clientId);
+
+        List<ClientAccount> clientAccounts = transactionalAccountMapper.findClientAccounts(clientId);
 
         if(clientAccounts.isEmpty()) {
             return new ArrayList<ClientAccount>();
         }
         for (ClientAccount clientAccount : clientAccounts) {
-
-            messageProducer.sendMessage("Available balance: "+clientAccount.getCurrency_code()+clientAccount.getDisplay_balance());
-            messageProducer.sendMessage("Account number:  "+clientAccount.getAccount_number());
-            messageProducer.sendMessage("Account type:  "+clientAccount.getAccount_type_code());
+//            messageConsumer.consume("Available balance::: "+clientAccount.getCurrency_code()+clientAccount.getDisplay_balance());
         }
 
         logger.info("AccountNumber:::"+ clientAccounts.get(0).getAccount_number());
@@ -70,7 +75,7 @@ public class TransactionalServiceImpl implements TransactionalService {
 
     //Todo unit testing
     @Override
-    public ClientAccount processCashWithdraw(int clientId, String accountNumber, double amount) {
+    public ClientAccount processCashWithdraw(int clientId, String accountNumber, double amount) throws IOException {
 
         ClientAccount clientAccountResponse = new ClientAccount();
         List<ClientAccount>  currentAccountBalances = displayBalance(clientId);
