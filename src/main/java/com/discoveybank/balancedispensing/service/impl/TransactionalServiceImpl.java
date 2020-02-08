@@ -7,6 +7,7 @@ import java.util.List;
 import com.discoveybank.balancedispensing.model.ClientAccount;
 import com.discoveybank.balancedispensing.mapper.TransactionalAccountMapper;
 
+import com.discoveybank.balancedispensing.service.MessageProducer;
 import com.discoveybank.balancedispensing.service.TransactionalService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,13 +25,11 @@ public class TransactionalServiceImpl implements TransactionalService {
     private static final String USD = "USD";
     private static final String ZAR = "ZAR";
 
-    private final TransactionalAccountMapper transactionalAccountMapper;
+    @Autowired
+    private TransactionalAccountMapper transactionalAccountMapper;
 
     @Autowired
-    public TransactionalServiceImpl(TransactionalAccountMapper transactionalAccountMapper) {
-        this.transactionalAccountMapper = transactionalAccountMapper;
-    }
-
+    private MessageProducer messageProducer;
     //Todo unit testing
     @Override
     public List<ClientAccount> displayBalance( int clientId) {
@@ -38,6 +37,12 @@ public class TransactionalServiceImpl implements TransactionalService {
 
         if(clientAccounts.isEmpty()) {
             return new ArrayList<ClientAccount>();
+        }
+        for (ClientAccount clientAccount : clientAccounts) {
+
+            messageProducer.sendMessage("Available balance: "+clientAccount.getCurrency_code()+clientAccount.getDisplay_balance());
+            messageProducer.sendMessage("Account number:  "+clientAccount.getAccount_number());
+            messageProducer.sendMessage("Account type:  "+clientAccount.getAccount_type_code());
         }
 
         logger.info("AccountNumber:::"+ clientAccounts.get(0).getAccount_number());
