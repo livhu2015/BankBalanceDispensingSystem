@@ -13,9 +13,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/secured")
-public class SecuredTransactionController {
+public class TransactionManagementController {
 
-    private Logger logger = LoggerFactory.getLogger(SecuredTransactionController.class);
+    private Logger logger = LoggerFactory.getLogger(TransactionManagementController.class);
 
     @Autowired
     private TransactionalService transactionalService;
@@ -32,19 +32,19 @@ public class SecuredTransactionController {
     @GetMapping("/balance/{clientId}")
     public @ResponseBody
     List<ClientAccount> displayBalance(@PathVariable("clientId") int clientId) throws IOException {
-        logger.info("display balance...");
+        logger.info("Display balance for "+clientId+"...");
         return transactionalService.displayBalance(clientId);
     }
 
     /**
      * Display currency account balances with converted Rand values
      */
-    @PostMapping("/convert/{rate}")
+    @PostMapping("/convert/{currencyCode}")
     public @ResponseBody
-    ClientAccount ConvertCurrencyToRand(@RequestBody ClientAccount clientAccount, @PathVariable("rate") BigDecimal rate) {
+    ClientAccount ConvertCurrencyToRand(@RequestBody ClientAccount clientAccount, @PathVariable("currencyCode") String currencyCode) {
         logger.info("Converting currency" + clientAccount.getCurrency_code() + " to ZAR...");
 
-        return transactionalService.convertCurrencyToRand(clientAccount, rate);
+        return transactionalService.convertCurrencyToRand(clientAccount, currencyCode);
     }
 
     /**
@@ -57,7 +57,7 @@ public class SecuredTransactionController {
         return transactionalService.processCashWithdraw(clientAccount.getClient_id(), clientAccount.getAccount_number(), amount.doubleValue());
     }
 
-//
+
 //    @GetMapping("/view-clients")
 //    public List<Client> viewClients() {
 //        System.out.println("Find all clients...");

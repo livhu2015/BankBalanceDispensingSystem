@@ -8,6 +8,7 @@ import java.util.List;
 import com.discoveybank.balancedispensing.model.ClientAccount;
 import com.discoveybank.balancedispensing.mapper.TransactionalAccountMapper;
 
+import com.discoveybank.balancedispensing.model.CurrencyConversionRate;
 import com.discoveybank.balancedispensing.service.MessageConsumer;
 import com.discoveybank.balancedispensing.service.MessageProducer;
 import com.discoveybank.balancedispensing.service.TransactionalService;
@@ -40,35 +41,29 @@ public class TransactionalServiceImpl implements TransactionalService {
     @Override
     public List<ClientAccount> displayBalance(int clientId) throws IOException {
 
-//        messageProducer.sendMessage("Client Id:: "+clientId);
-
         List<ClientAccount> clientAccounts = transactionalAccountMapper.findClientAccounts(clientId);
 
         if(clientAccounts.isEmpty()) {
             return new ArrayList<ClientAccount>();
         }
-        for (ClientAccount clientAccount : clientAccounts) {
-//            messageConsumer.consume("Available balance::: "+clientAccount.getCurrency_code()+clientAccount.getDisplay_balance());
-        }
-
-        logger.info("AccountNumber:::"+ clientAccounts.get(0).getAccount_number());
-
         return clientAccounts;
     }
 
     //Todo unit testing
     @Override
-    public ClientAccount convertCurrencyToRand(ClientAccount clientAccount, BigDecimal rate) {
+    public ClientAccount convertCurrencyToRand(ClientAccount clientAccount, String currencyCode) {
         ClientAccount convertedAccount = new ClientAccount();
+        CurrencyConversionRate currencyConversionRate = transactionalAccountMapper.findCurrencyConversionRate(clientAccount.getCurrency_code());
 
         String clientAccountNumber = clientAccount.getAccount_number();
         BigDecimal currentBalance = clientAccount.getDisplay_balance();
 
+        convertedAccount.setDisplay_balance(currentBalance.multiply(currencyConversionRate.getRate()));
+
         convertedAccount.setAccount_number(clientAccountNumber);
         convertedAccount.setAccount_type_code(clientAccount.getAccount_type_code());
-        convertedAccount.setDisplay_balance(currentBalance.multiply(rate));
         convertedAccount.setClient_id(clientAccount.getClient_id());
-        convertedAccount.setCurrency_code(clientAccount.getCurrency_code());
+        convertedAccount.setCurrency_code(currencyConversionRate.getCurrency_code());
 
         return convertedAccount;
     }

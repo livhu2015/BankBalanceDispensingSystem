@@ -37,6 +37,4 @@ public class ReportManagementController {
          return reportManagementService.calculateClientsAggregatePosition();
     }
 
-
-
 }

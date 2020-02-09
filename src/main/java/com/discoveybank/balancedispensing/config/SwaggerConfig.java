@@ -16,9 +16,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class SwaggerConfig {
 
-    private String title = "Bank System";
-    private String description = "API";
-    private String termsOfServiceUrl = "http:discovery.com";
+    private static final String TITLE = "Bank System";
+    private static final String DESCRIPTION = "API";
+    private static final String TERMS_CONDITION = "http:discovery.com";
 
     @Bean
     public Docket api() {
@@ -30,8 +30,8 @@ public class SwaggerConfig {
     }
    
     private ApiInfo apiInfo() {
-        return new ApiInfoBuilder().title(title).description(description)
-                .termsOfServiceUrl(termsOfServiceUrl)
+        return new ApiInfoBuilder().title(TITLE).description(DESCRIPTION)
+                .termsOfServiceUrl(TERMS_CONDITION)
                 .contact(new Contact("Discovery", "http://www.dicovery.com", "livhuwanimatsigila@gmail.com"))
                 .license("Open Source").licenseUrl("https://www.discovery.com").version("1.0.0").build();
     }

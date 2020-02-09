@@ -1,6 +1,6 @@
 package com.discoveybank.balancedispensing.service.impl;
 
-import com.discoveybank.balancedispensing.mapper.ClientMapper;
+import com.discoveybank.balancedispensing.mapper.ClientManagementMapper;
 import com.discoveybank.balancedispensing.mapper.ReportManagementMapper;
 import com.discoveybank.balancedispensing.mapper.TransactionalAccountMapper;
 import com.discoveybank.balancedispensing.model.Client;
@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +22,7 @@ public class ReportManagementServiceImpl implements ReportManagementService {
     private ReportManagementMapper reportManagementMapper;
 
     @Autowired
-    private ClientMapper clientMapper;
+    private ClientManagementMapper clientManagementMapper;
 
     @Autowired
     private TransactionalAccountMapper transactionalAccountMapper;
@@ -37,7 +36,7 @@ public class ReportManagementServiceImpl implements ReportManagementService {
     public List<ClientAggregate> calculateClientsAggregatePosition() {
 
         List<ClientAggregate> clientAggregates = new ArrayList<>();
-        List<Client> clients = clientMapper.findAll();
+        List<Client> clients = clientManagementMapper.findAllClients();
 
         for(Client client: clients) {
             ClientAggregate clientAggregate = calculateAggregatePosition(client.getClientId());
@@ -46,16 +45,10 @@ public class ReportManagementServiceImpl implements ReportManagementService {
         return clientAggregates;
     }
 
-    /**
-     * Client (Client Title + Client Name + Client Surname)
-     * Loan Balance (Aggregate of all loan amounts)
-     * Transactional Balance (Aggregate of all transactional accounts)
-     * Net Position (Net position across all accounts)
-     */
     private ClientAggregate calculateAggregatePosition(int clientId) {
 
         ClientAggregate clientAggregateResponse = new ClientAggregate();
-        Client client = clientMapper.findClientById(clientId);
+        Client client = clientManagementMapper.findClientById(clientId);
         clientAggregateResponse.setName(client.getName());
         clientAggregateResponse.setSurname(client.getSurname());
         clientAggregateResponse.setTitle(client.getTitle());

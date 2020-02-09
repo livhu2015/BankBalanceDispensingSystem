@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface TransactionalService {
     List<ClientAccount> displayBalance(int clientId) throws IOException;
-    ClientAccount convertCurrencyToRand(ClientAccount clientAccount, BigDecimal rate);
+    ClientAccount convertCurrencyToRand(ClientAccount clientAccount, String currencyCode);
     ClientAccount processCashWithdraw(int clientId, String accountNumber, double amount) throws IOException;
 }
