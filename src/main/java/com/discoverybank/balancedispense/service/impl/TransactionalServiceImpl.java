@@ -9,6 +9,7 @@ import com.discoverybank.balancedispense.mapper.TransactionalAccountMapper;
 import com.discoverybank.balancedispense.model.dao.ClientAccount;
 import com.discoverybank.balancedispense.model.dao.CurrencyConversionRate;
 import com.discoverybank.balancedispense.model.dto.CurrencyAccountBalance;
+import com.discoverybank.balancedispense.model.dto.CurrencyConversion;
 import com.discoverybank.balancedispense.model.dto.TransactionalAccount;
 import com.discoverybank.balancedispense.service.MessageConsumer;
 import com.discoverybank.balancedispense.service.MessageProducer;
@@ -63,15 +64,15 @@ public class TransactionalServiceImpl implements TransactionalService {
 
             for (CurrencyAccountBalance foreignAccount: foreignAccounts) {
 
-                CurrencyConversionRate currencyConversionRate = transactionalAccountMapper.findCurrencyConversionRate(foreignAccount.getCurrencyCode());
+                CurrencyConversion currencyConversion = transactionalAccountMapper.findCurrencyConversionRate(foreignAccount.getCurrencyCode());
                 double currentBalance = foreignAccount.getDisplayBalance();
                 String accountNumber = foreignAccount.getAccountNumber();
 
-                currencyAccountBalance.setConvertedAmount(currentBalance * currencyConversionRate.getRate().doubleValue());
+                currencyAccountBalance.setConvertedAmount(currentBalance * currencyConversion.getRate());
                 currencyAccountBalance.setDisplayBalance(currentBalance);
                 currencyAccountBalance.setAccountNumber(accountNumber);
-                currencyAccountBalance.setConversionRate(currencyConversionRate.getRate().doubleValue());
-                currencyAccountBalance.setCurrencyCode(currencyConversionRate.getCurrency_code());
+                currencyAccountBalance.setConversionRate(currencyConversion.getRate());
+                currencyAccountBalance.setCurrencyCode(currencyConversion.getCode());
 
                 convertedAccountResponse.add(currencyAccountBalance);
             }

@@ -2,6 +2,9 @@ package com.discoverybank.balancedispense.service;
 
 import com.discoverybank.balancedispense.mapper.TransactionalAccountMapper;
 import com.discoverybank.balancedispense.model.dao.ClientAccount
+import com.discoverybank.balancedispense.model.dao.CurrencyConversionRate
+import com.discoverybank.balancedispense.model.dto.CurrencyAccountBalance
+import com.discoverybank.balancedispense.model.dto.CurrencyConversion
 import com.discoverybank.balancedispense.model.dto.TransactionalAccount
 import com.discoverybank.balancedispense.service.impl.TransactionalServiceImpl
 import spock.lang.Specification
@@ -63,6 +66,41 @@ class TransactionalServiceSpec extends Specification {
         clientAccounts.isEmpty()
     }
 
+    def 'should be able to view available balances of currency accounts with converted Rand values'() {
+        given: 'client id'
+        int clientId = 1
+
+        when: 'calling a convert foreign currency to ZAR'
+        List<CurrencyAccountBalance> accountBalances = transactionalService.convertForeignCurrencyToRand(clientId)
+
+        then: 'should return the list of foreign accounts and their currencies'
+        1 * transactionalAccountMapper.findForeignCurrencyAccounts(_) >> new ArrayList<CurrencyAccountBalance>([currencyAccountBalance()])
+        1 * transactionalAccountMapper.findCurrencyConversionRate(_) >> conversionRate()
+
+        and: 'display the error message'
+        !accountBalances.isEmpty()
+        accountBalances.get(0).displayBalance==1
+        accountBalances.get(0).conversionRate==15
+        accountBalances.get(0).convertedAmount==15
+    }
+
+    private CurrencyConversion conversionRate() {
+        CurrencyConversion conversion = new CurrencyConversion()
+        conversion.setCode("USD")
+        conversion.setRate(15)
+        conversion
+    }
+
+    private CurrencyAccountBalance currencyAccountBalance() {
+        CurrencyAccountBalance currencyAccountBalance = new CurrencyAccountBalance();
+        currencyAccountBalance.setDisplayBalance(1)
+        currencyAccountBalance.setCurrencyCode("USD")
+        currencyAccountBalance.setAccountNumber("some-account")
+        currencyAccountBalance.setConversionRate(15)
+        currencyAccountBalance.setConvertedAmount(15)
+        currencyAccountBalance
+    }
+
     private TransactionalAccount clientAccountResponse() {
         TransactionalAccount account = new TransactionalAccount();
         account.setAccountNumber("some-account")
@@ -72,6 +110,7 @@ class TransactionalServiceSpec extends Specification {
         account.setTransactional(true)
         return account
     }
+
     private TransactionalAccount nonTransactionalAccountResponse() {
         TransactionalAccount account = new TransactionalAccount();
         account.setAccountNumber("some-account")

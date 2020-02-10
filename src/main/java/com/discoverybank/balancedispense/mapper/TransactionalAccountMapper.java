@@ -6,6 +6,7 @@ import com.discoverybank.balancedispense.model.dao.ClientAccount;
 
 import com.discoverybank.balancedispense.model.dao.CurrencyConversionRate;
 import com.discoverybank.balancedispense.model.dto.CurrencyAccountBalance;
+import com.discoverybank.balancedispense.model.dto.CurrencyConversion;
 import com.discoverybank.balancedispense.model.dto.TransactionalAccount;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -38,5 +39,5 @@ public interface TransactionalAccountMapper {
 
     @Select("SELECT * FROM currency_conversion_rate\n" +
             "WHERE currency_code=#{currencyCode}")
-    CurrencyConversionRate findCurrencyConversionRate(String z);
+    CurrencyConversion findCurrencyConversionRate(String currencyCode);
 }
