@@ -8,6 +8,8 @@ import java.util.List;
 import com.discoverybank.balancedispense.mapper.TransactionalAccountMapper;
 import com.discoverybank.balancedispense.model.dao.ClientAccount;
 import com.discoverybank.balancedispense.model.dao.CurrencyConversionRate;
+import com.discoverybank.balancedispense.model.dto.CurrencyAccountBalance;
+import com.discoverybank.balancedispense.model.dto.TransactionalAccount;
 import com.discoverybank.balancedispense.service.MessageConsumer;
 import com.discoverybank.balancedispense.service.MessageProducer;
 import com.discoverybank.balancedispense.service.TransactionalService;
@@ -31,75 +33,92 @@ public class TransactionalServiceImpl implements TransactionalService {
     @Autowired
     private TransactionalAccountMapper transactionalAccountMapper;
 
-    @Autowired
-    private MessageProducer messageProducer;
-
-//    @Autowired
-//    private MessageConsumer messageConsumer;
-
-    //Todo unit testing
     @Override
-    public List<ClientAccount> displayBalance(int clientId) throws IOException {
+    public List<TransactionalAccount> displayBalance(int clientId) {
+        List<TransactionalAccount> transactionalAccountsResponse = new ArrayList<>();
 
-        List<ClientAccount> clientAccounts = transactionalAccountMapper.findClientAccounts(clientId);
-
-        if(clientAccounts.isEmpty()) {
-            return new ArrayList<ClientAccount>();
+        try {
+            List<TransactionalAccount> transactionalAccounts = transactionalAccountMapper.findClientAccounts(clientId);
+            for (TransactionalAccount transactionalAccount: transactionalAccounts) {
+                if (transactionalAccount.isTransactional()) {
+                    transactionalAccountsResponse.add(transactionalAccount);
+                }
+            }
+        } catch (Exception ex) {
+            logger.error("No account found:", ex.getMessage());
+            return new ArrayList<>();
         }
-        return clientAccounts;
+
+        return transactionalAccountsResponse;
     }
 
-    //Todo unit testing
     @Override
-    public ClientAccount convertCurrencyToRand(ClientAccount clientAccount, String currencyCode) {
-        ClientAccount convertedAccount = new ClientAccount();
-        CurrencyConversionRate currencyConversionRate = transactionalAccountMapper.findCurrencyConversionRate(clientAccount.getCurrency_code());
+    public List<CurrencyAccountBalance> convertForeignCurrencyToRand(int clientId) {
 
-        String clientAccountNumber = clientAccount.getAccount_number();
-        BigDecimal currentBalance = clientAccount.getDisplay_balance();
+        List<CurrencyAccountBalance> convertedAccountResponse = new ArrayList<>();
+        CurrencyAccountBalance currencyAccountBalance = new CurrencyAccountBalance();
 
-        convertedAccount.setDisplay_balance(currentBalance.multiply(currencyConversionRate.getRate()));
+        try {
+            List<CurrencyAccountBalance> foreignAccounts = transactionalAccountMapper.findForeignCurrencyAccounts(clientId);
 
-        convertedAccount.setAccount_number(clientAccountNumber);
-        convertedAccount.setAccount_type_code(clientAccount.getAccount_type_code());
-        convertedAccount.setClient_id(clientAccount.getClient_id());
-        convertedAccount.setCurrency_code(currencyConversionRate.getCurrency_code());
+            for (CurrencyAccountBalance foreignAccount: foreignAccounts) {
 
-        return convertedAccount;
+                CurrencyConversionRate currencyConversionRate = transactionalAccountMapper.findCurrencyConversionRate(foreignAccount.getCurrencyCode());
+                double currentBalance = foreignAccount.getDisplayBalance();
+                String accountNumber = foreignAccount.getAccountNumber();
+
+                currencyAccountBalance.setConvertedAmount(currentBalance * currencyConversionRate.getRate().doubleValue());
+                currencyAccountBalance.setDisplayBalance(currentBalance);
+                currencyAccountBalance.setAccountNumber(accountNumber);
+                currencyAccountBalance.setConversionRate(currencyConversionRate.getRate().doubleValue());
+                currencyAccountBalance.setCurrencyCode(currencyConversionRate.getCurrency_code());
+
+                convertedAccountResponse.add(currencyAccountBalance);
+            }
+        } catch (Exception e) {
+            logger.error("No account found: ", e.getMessage());
+            return new ArrayList<>();
+        }
+        return convertedAccountResponse;
     }
 
-    //Todo unit testing
     @Override
     public ClientAccount processCashWithdraw(int clientId, String accountNumber, double amount) throws IOException {
-
-        ClientAccount clientAccountResponse = new ClientAccount();
-
-        List<ClientAccount>  currentAccountBalances = displayBalance(clientId);
-        for (ClientAccount clientAccount: currentAccountBalances) {
-            double currentAccountBalance = clientAccount.getDisplay_balance().doubleValue();
-
-            if (clientAccount.getAccount_number().equals(accountNumber)) {
-
-                if (currentAccountBalance > amount) {
-                    currentAccountBalance = currentAccountBalance - amount;
-                    clientAccountResponse.setDisplay_balance(BigDecimal.valueOf(currentAccountBalance));
-                    //Update the client account
-                    clientAccountResponse = transactionalAccountMapper.updateAccountBalance(clientAccountResponse);
-
-                }else {
-                    // insufficient funds
-                }
-                clientAccountResponse.setCurrency_code(clientAccount.getCurrency_code());
-                clientAccountResponse.setClient_id(clientAccount.getClient_id());
-                clientAccountResponse.setAccount_type_code(clientAccount.getAccount_type_code());
-                clientAccountResponse.setAccount_number(clientAccount.getAccount_number());
-
-            } else {
-                //Todo handle the errors
-                //invalid account
-            }
-        }
-        return clientAccountResponse;
+        return null;
     }
+//
+//    //Todo unit testing
+//    @Override
+//    public TransactionalAccount processCashWithdraw(int clientId, String accountNumber, double amount) throws IOException {
+//
+//        ClientAccount clientAccountResponse = new ClientAccount();
+//
+//        List<TransactionalAccount>  currentAccountBalances = displayBalance(clientId);
+//        for (TransactionalAccount clientAccount: currentAccountBalances) {
+//            double currentAccountBalance = clientAccount.getDisplay_balance().doubleValue();
+//
+//            if (clientAccount.getAccount_number().equals(accountNumber)) {
+//
+//                if (currentAccountBalance > amount) {
+//                    currentAccountBalance = currentAccountBalance - amount;
+//                    clientAccountResponse.setDisplay_balance(BigDecimal.valueOf(currentAccountBalance));
+//                    //Update the client account
+//                    clientAccountResponse = transactionalAccountMapper.updateAccountBalance(clientAccountResponse);
+//
+//                }else {
+//                    // insufficient funds
+//                }
+//                clientAccountResponse.setCurrency_code(clientAccount.getCurrency_code());
+//                clientAccountResponse.setClient_id(clientAccount.getClient_id());
+//                clientAccountResponse.setAccount_type_code(clientAccount.getAccount_type_code());
+//                clientAccountResponse.setAccount_number(clientAccount.getAccount_number());
+//
+//            } else {
+//                //Todo handle the errors
+//                //invalid account
+//            }
+//        }
+//        return clientAccountResponse;
+//    }
 
 }

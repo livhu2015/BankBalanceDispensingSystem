@@ -1,6 +1,8 @@
 package com.discoverybank.balancedispense.controller;
 
 import com.discoverybank.balancedispense.model.dao.ClientAccount;
+import com.discoverybank.balancedispense.model.dto.CurrencyAccountBalance;
+import com.discoverybank.balancedispense.model.dto.TransactionalAccount;
 import com.discoverybank.balancedispense.service.TransactionalService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,31 +22,22 @@ public class TransactionManagementController {
     @Autowired
     private TransactionalService transactionalService;
 
-    /**
-     * Client is able to view all transactional accounts with the available balances
-     * on each account in descending order with the highest balance displaying first
-     * and the lowest balance displaying last
-     * <p>
-     * Client sends a request to the server with the client id and a timestamp
-     *
-     * @return balance
-     */
     @GetMapping("/balance/{clientId}")
     public @ResponseBody
-    List<ClientAccount> displayBalance(@PathVariable("clientId") int clientId) throws IOException {
+    List<TransactionalAccount> displayBalance(@PathVariable("clientId") int clientId) throws IOException {
+
         logger.info("Display balance for "+clientId+"...");
+
         return transactionalService.displayBalance(clientId);
     }
 
-    /**
-     * Display currency account balances with converted Rand values
-     */
-    @PostMapping("/convert/{currencyCode}")
+    @PostMapping("/foreign-exchange/{clientId}")
     public @ResponseBody
-    ClientAccount ConvertCurrencyToRand(@RequestBody ClientAccount clientAccount, @PathVariable("currencyCode") String currencyCode) {
-        logger.info("Converting currency" + clientAccount.getCurrency_code() + " to ZAR...");
+    List<CurrencyAccountBalance> ConvertCurrencyToRand(@PathVariable("clientId") int clientId) {
 
-        return transactionalService.convertCurrencyToRand(clientAccount, currencyCode);
+        logger.info("Converting currency of client id:: " + clientId + " to ZAR...");
+
+        return transactionalService.convertForeignCurrencyToRand(clientId);
     }
 
     /**
