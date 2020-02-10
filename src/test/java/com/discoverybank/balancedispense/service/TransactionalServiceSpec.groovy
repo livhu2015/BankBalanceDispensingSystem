@@ -18,7 +18,7 @@ class TransactionalServiceSpec extends Specification {
     private TransactionalAccountMapper transactionalAccountMapper = Mock()
 
     public TransactionalServiceImpl transactionalService = new TransactionalServiceImpl(
-            transactionalAccountMapper: transactionalAccountMapper,)
+            transactionalAccountMapper: transactionalAccountMapper)
 
     def 'should be able to view all transactional accounts with the available balances' () {
         given: 'client id'
@@ -86,18 +86,18 @@ class TransactionalServiceSpec extends Specification {
 
     private CurrencyConversion conversionRate() {
         CurrencyConversion conversion = new CurrencyConversion()
-        conversion.setCode("USD")
+        conversion.setCurrencyCode("USD")
         conversion.setRate(15)
         conversion
     }
 
     private CurrencyAccountBalance currencyAccountBalance() {
         CurrencyAccountBalance currencyAccountBalance = new CurrencyAccountBalance();
-        currencyAccountBalance.setDisplayBalance(1)
+        currencyAccountBalance.setCurrencyBalance(1)
         currencyAccountBalance.setCurrencyCode("USD")
         currencyAccountBalance.setAccountNumber("some-account")
         currencyAccountBalance.setConversionRate(15)
-        currencyAccountBalance.setConvertedAmount(15)
+        currencyAccountBalance.setRandAmount(15)
         currencyAccountBalance
     }
 

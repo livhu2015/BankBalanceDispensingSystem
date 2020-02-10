@@ -1,12 +1,14 @@
-package com.discoverybank.balancedispense.model.dao;
+package com.discoverybank.balancedispense.model.dto;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class ClientAccountDetail {
+public class ClientAccountDetail implements Serializable {
 
-    private String title, name, surname, account_number, description;
-    private BigDecimal display_balance;
+    private String title, name, surname, accountNumber, description;
+    private double displayBalance;
     private Boolean transactional;
+    private String currencyCode;
 
     public String getTitle() {
         return title;
@@ -32,14 +34,6 @@ public class ClientAccountDetail {
         this.surname = surname;
     }
 
-    public String getAccount_number() {
-        return account_number;
-    }
-
-    public void setAccount_number(String account_number) {
-        this.account_number = account_number;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -48,19 +42,40 @@ public class ClientAccountDetail {
         this.description = description;
     }
 
-    public BigDecimal getDisplay_balance() {
-        return display_balance;
-    }
-
-    public void setDisplay_balance(BigDecimal display_balance) {
-        this.display_balance = display_balance;
-    }
-
     public Boolean getTransactional() {
         return transactional;
     }
 
     public void setTransactional(Boolean transactional) {
         this.transactional = transactional;
+    }
+
+    public double getDisplayBalance() {
+        return displayBalance;
+    }
+
+    public void setDisplayBalance(double displayBalance) {
+        this.displayBalance = displayBalance;
+    }
+
+
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
+    }
+
+    public String getCurrencyCode() {
+        return currencyCode;
+    }
+
+    public void setCurrencyCode(String currencyCode) {
+        this.currencyCode = currencyCode;
+    }
+
+    public void setAccountTypeCode(String accountNumber) {
+        this.accountNumber = accountNumber;
     }
 }

@@ -1,22 +1,22 @@
 package com.discoverybank.balancedispense.model.dto;
 
 public class CurrencyConversion {
-    private double rate;
-    private String code;
+    private double conversionRate;
+    private String currencyCode;
 
     public double getRate() {
-        return rate;
+        return conversionRate;
     }
 
     public void setRate(double rate) {
-        this.rate = rate;
+        this.conversionRate = rate;
     }
 
-    public String getCode() {
-        return code;
+    public String getCurrencyCode() {
+        return currencyCode;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setCurrencyCode(String currencyCode) {
+        this.currencyCode = currencyCode;
     }
 }

@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 
 public class ClientAccountSummary implements Serializable {
     private String name, surname, accountNumber, description;
-    private BigDecimal displayBalance;
+    private double displayBalance;
 
     public String getDescription() {
         return description;
@@ -39,11 +39,11 @@ public class ClientAccountSummary implements Serializable {
         this.accountNumber = accountNumber;
     }
 
-    public BigDecimal getDisplayBalance() {
+    public double getDisplayBalance() {
         return displayBalance;
     }
 
-    public void setDisplayBalance(BigDecimal displayBalance) {
+    public void setDisplayBalance(double displayBalance) {
         this.displayBalance = displayBalance;
     }
 }

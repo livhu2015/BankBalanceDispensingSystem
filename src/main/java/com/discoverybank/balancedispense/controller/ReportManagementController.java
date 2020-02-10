@@ -1,6 +1,7 @@
 package com.discoverybank.balancedispense.controller;
 
 
+import com.discoverybank.balancedispense.model.dto.ClientAccountSummary;
 import com.discoverybank.balancedispense.service.ReportManagementService;
 import com.discoverybank.balancedispense.model.dto.ClientAggregate;
 import org.slf4j.Logger;
@@ -21,7 +22,7 @@ public class ReportManagementController {
 
     @GetMapping("/transactional-accounts")
     public @ResponseBody
-    List<ClientAggregate.ClientAccountSummary> generateClientAccountReport() {
+    List<ClientAccountSummary> generateClientAccountReport() {
         logger.info("Reporting on the transactional account per client with the highest balance...");
         return reportManagementService.generateClientAccountReport();
     }

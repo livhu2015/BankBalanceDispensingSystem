@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.discoverybank.balancedispense.model.dao.Client;
 
+import com.discoverybank.balancedispense.model.dto.ClientProfile;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -11,12 +12,12 @@ import org.apache.ibatis.annotations.Select;
 public interface ClientManagementMapper {
 
     @Select("SELECT * FROM client")
-    public List<Client> findAllClients();
+    List<ClientProfile> findAllClients();
 
-    @Select("SELECT title as title, name as name, surname as surname " +
+    @Select("SELECT client_id as clientId, title as title, name as name, surname as surname " +
             "FROM client " +
-            "WHERE client_id=#{client_id}")
-    public Client findClientById(int clientId);
+            "WHERE client_id=#{clientId}")
+    ClientProfile findClientById(int clientId);
 
 //    @Delete("DELETE FROM client WHERE client_id = #{client_id}")
 //    public int deleteById(int id);

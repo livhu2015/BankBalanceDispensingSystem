@@ -1,6 +1,7 @@
 package com.discoverybank.balancedispense.controller;
 
 import com.discoverybank.balancedispense.model.dao.ClientAccount;
+import com.discoverybank.balancedispense.model.dto.ClientAccountDetail;
 import com.discoverybank.balancedispense.model.dto.CurrencyAccountBalance;
 import com.discoverybank.balancedispense.model.dto.TransactionalAccount;
 import com.discoverybank.balancedispense.service.TransactionalService;
@@ -14,7 +15,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/secured")
+@RequestMapping("/transact")
 public class TransactionManagementController {
 
     private Logger logger = LoggerFactory.getLogger(TransactionManagementController.class);
@@ -40,27 +41,10 @@ public class TransactionManagementController {
         return transactionalService.convertForeignCurrencyToRand(clientId);
     }
 
-    /**
-     * Display currency account balances with converted Rand values
-     */
     @PostMapping("/withdraw/{amount}")
     public @ResponseBody
-    ClientAccount processCashWithdraw(@RequestBody ClientAccount clientAccount, @PathVariable("amount") BigDecimal amount) throws IOException {
-        logger.info("withdraw of amount"+amount + " to ZAR...");
-        return transactionalService.processCashWithdraw(clientAccount.getClient_id(), clientAccount.getAccount_number(), amount.doubleValue());
+    ClientAccountDetail processCashWithdraw(@RequestBody ClientAccount clientAccount, @PathVariable("amount") double amount) throws IOException {
+        return transactionalService.processCashWithdraw(clientAccount.getClient_id(), clientAccount.getAccount_number(), amount);
     }
 
-
-//    @GetMapping("/view-clients")
-//    public List<Client> viewClients() {
-//        System.out.println("Find all clients...");
-//        return clientRepository.findAll();
-//    }
-//
-//    @PostMapping("/create")
-//    public String createClient(@RequestBody Client client) {
-//        logger.info("Inserting -> {}", client);
-//        int response = clientRepository.insert(client);
-//        return "respnse with id: " + response;
-//    }
 }

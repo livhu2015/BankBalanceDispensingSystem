@@ -5,6 +5,7 @@ import java.util.List;
 import com.discoverybank.balancedispense.model.dao.ClientAccount;
 
 import com.discoverybank.balancedispense.model.dao.CurrencyConversionRate;
+import com.discoverybank.balancedispense.model.dto.ClientAccountDetail;
 import com.discoverybank.balancedispense.model.dto.CurrencyAccountBalance;
 import com.discoverybank.balancedispense.model.dto.CurrencyConversion;
 import com.discoverybank.balancedispense.model.dto.TransactionalAccount;
@@ -26,10 +27,10 @@ public interface TransactionalAccountMapper {
     List<TransactionalAccount> findClientAccounts(int clientId);
 
     @Update("Update client_account set display_balance=#{display_balance} where client_id=#{client_id}")
-    ClientAccount updateAccountBalance(ClientAccount updatedClientAccount);
+    ClientAccountDetail updateAccountBalance(ClientAccountDetail updatedClientAccount);
 
     @Select("SELECT account_number as accountNumber, currency_code as currencyCode, \n" +
-            "display_balance as displayBalance\n" +
+            "display_balance as currencyBalance\n" +
             "FROM client_account \n" +
             "INNER JOIN account_type\n" +
             "ON account_type.account_type_code=client_account.account_type_code\n" +
@@ -37,7 +38,7 @@ public interface TransactionalAccountMapper {
             "ORDER BY display_balance DESC")
     List<CurrencyAccountBalance> findForeignCurrencyAccounts(int clientId);
 
-    @Select("SELECT * FROM currency_conversion_rate\n" +
+    @Select("SELECT rate as conversionRate, currency_code as currencyCode FROM currency_conversion_rate\n" +
             "WHERE currency_code=#{currencyCode}")
     CurrencyConversion findCurrencyConversionRate(String currencyCode);
 }
